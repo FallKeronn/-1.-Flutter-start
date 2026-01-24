@@ -1,117 +1,136 @@
 import 'package:flutter/material.dart';
 
-mixin Welcome {
-  String greet() => "Welcome to my second homework";
-}
-
-class Me with Welcome {
-  final String name;
-  final String surname;
-  final int age;
-
-
-  factory Me.example() {
-    return Me(
-      name: "Oleh",
-      surname: "Naumenko",
-    );
-  }
-
-  Me({
-    required this.name,
-    required this.surname,
-    int myAge = 25,
-  })  : age = myAge,
-        assert(myAge > 20);
-
-  String get fullName => "$name $surname";
-}
-
 void main() {
-  runApp(const Homework2());
+  runApp(const InstagramApp());
 }
 
-class Homework2 extends StatelessWidget {
-  const Homework2({super.key});
+class InstagramApp extends StatelessWidget {
+  const InstagramApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
+      title: 'Instagram',
       theme: ThemeData(
-        textTheme: const TextTheme(
-          bodyMedium: TextStyle(fontSize: 18),
-        ),
+        scaffoldBackgroundColor: Colors.grey[200],
       ),
-      home: const HomeScreen(),
+      home: const InstagramHome(),
     );
   }
 }
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  String lambda(String text) => text.trim();
-
-  int Function() counter() {
-    int count = 0;
-    return () => ++count;
-  }
+class InstagramHome extends StatelessWidget {
+  const InstagramHome({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final me = Me(surname: "Naumenko", name: "Oleh", myAge: 25);
-
-    String? tgNickname;
-    tgNickname ??= "@FallKeronn";
-
-    final count = counter();
-
-    final List<String> social = ["Telegram", "Instagram", "LinkedIn"];
-    final Set<String> languages = {"Ukrainian", "English"};
-    final Map<String, int> family = {
-      "Sister": 2,
-      "Brother": 1,
-    };
-
     return Scaffold(
       appBar: AppBar(
-        title: Text("Homework 2"),
+        backgroundColor: Colors.grey[200],
+        elevation: 1,
+        title: const Text(
+          'Instagram',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
       ),
-      body: Padding(
-        padding: EdgeInsets.all(50),
-        child: ListView(
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(me.greet()),
-            SizedBox(height: 25),
 
-            Text("Name: ${me.fullName}"),
-            Text("Age: ${me.age}"),
-            Text("TgNickname: $tgNickname"),
-
-            SizedBox(height: 25),
-
-            Text(
-              "Factory constructor result:",
+            Container(
+              padding: const EdgeInsets.all(8),
+              color: Colors.white,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: const [
+                      CircleAvatar(
+                        backgroundImage: NetworkImage(
+                            'https://images.wallpapershq.com/wallpapers/6693/wallpaper_6693_2560x1440.jpg'),
+                        radius: 20,
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        'Harry',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                    ],
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.more_vert),
+                    onPressed: () {},
+                  ),
+                ],
+              ),
             ),
-            Text(Me.example().fullName),
 
-            SizedBox(height: 25),
+            Container(
+              height: 350,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                image: const DecorationImage(
+                  image: NetworkImage(
+                      'https://images.wallpapershq.com/''wallpapers/6630/wallpaper_6630_2560x1440.jpg'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
 
-            Text("Lambda and Closure example: ${lambda(me.fullName)}"),
-            Text("-${count()}"),
-            Text("-${count()}"),
-            Text("-${count()}"),
-            Text("-${count()}"),
-            Text("-${count()}"),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+              color: Colors.white,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: const [
+                      Icon(Icons.favorite_border, size: 28),
+                      SizedBox(width: 12),
+                      Icon(Icons.comment_outlined, size: 28),
+                      SizedBox(width: 12),
+                      Icon(Icons.send_outlined, size: 28),
+                    ],
+                  ),
+                  const Icon(Icons.bookmark_border, size: 28),
+                ],
+              ),
+            ),
 
-            SizedBox(height: 25),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              color: Colors.white,
+              child: const Text(
+                'Liked by Tom and 342 others',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
 
-            Text("Social: $social"),
-            Text("Languages: $languages"),
-            Text("Family: $family"),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              color: Colors.white,
+              child: RichText(
+                text: const TextSpan(
+                  style: TextStyle(color: Colors.black),
+                  children: [
+                    TextSpan(
+                        text: 'Harry ',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    TextSpan(
+                        text:
+                        'This example of my 3th homework for flutter'),
+                  ],
+                ),
+              ),
+            ),
 
-            SizedBox(height: 25),
+            const SizedBox(height: 12),
           ],
         ),
       ),
