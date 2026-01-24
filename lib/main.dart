@@ -107,7 +107,7 @@ class InstagramHome extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               color: Colors.white,
               child: const Text(
-                'Liked by Tom and 342 others',
+                'Liked by Tom and 342 otherss',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
