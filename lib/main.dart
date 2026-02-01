@@ -1,137 +1,132 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const InstagramApp());
+  runApp(const AnimationApp());
 }
 
-class InstagramApp extends StatelessWidget {
-  const InstagramApp({super.key});
+class AnimationApp extends StatelessWidget {
+  const AnimationApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Instagram',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        scaffoldBackgroundColor: Colors.grey[200],
+        scaffoldBackgroundColor: Colors.grey.shade300,
       ),
-      home: const InstagramHome(),
+      home: Home(),
     );
   }
 }
 
-class InstagramHome extends StatelessWidget {
-  const InstagramHome({super.key});
+class Home extends StatefulWidget {
+  const Home({super.key});
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  int number = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.grey[200],
-        elevation: 1,
-        title: const Text(
-          'Instagram',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
+      appBar: AppBar(title: const Text('Home Page')),
+
+      drawer: Drawer(
+        child: ListView(
+          children: const [
+            DrawerHeader(
+              child: Text('Menu', style: TextStyle(fontSize: 20)),
+            ),
+            ListTile(title: Text('Home')),
+            ListTile(title: Text('Settings')),
+            ListTile(title: Text('Rules')),
+          ],
+        ),
+      ),
+
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 500),
+        child: number == 0
+            ? const HeroWidget()
+            : const Center(
+          child: Icon(
+            Icons.settings,
+            size: 50,
+            color: Colors.green,
           ),
         ),
-        centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
 
-            Container(
-              padding: const EdgeInsets.all(8),
-              color: Colors.white,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: const [
-                      CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            'https://images.wallpapershq.com/wallpapers/6693/wallpaper_6693_2560x1440.jpg'),
-                        radius: 20,
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        'Harry',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.more_vert),
-                    onPressed: () {},
-                  ),
-                ],
-              ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.open_in_new),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const HeroPage(),
             ),
+          );
+        },
+      ),
 
-            Container(
-              height: 350,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                image: const DecorationImage(
-                  image: NetworkImage(
-                      'https://images.wallpapershq.com/''wallpapers/6630/wallpaper_6630_2560x1440.jpg'),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: number,
+        onTap: (value) {
+          setState(() {
+            number = value;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+      ),
+    );
+  }
+}
 
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-              color: Colors.white,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: const [
-                      Icon(Icons.favorite_border, size: 28),
-                      SizedBox(width: 12),
-                      Icon(Icons.comment_outlined, size: 28),
-                      SizedBox(width: 12),
-                      Icon(Icons.send_outlined, size: 28),
-                    ],
-                  ),
-                  const Icon(Icons.bookmark_border, size: 28),
-                ],
-              ),
-            ),
+class HeroWidget extends StatelessWidget {
+  const HeroWidget({super.key});
 
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              color: Colors.white,
-              child: const Text(
-                'Liked by Tom and 342 otherss',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Hero(
+        tag: 'icon',
+        child: Icon(
+          Icons.home,
+          size: 50,
+          color: Colors.green,
+        ),
+      ),
+    );
+  }
+}
 
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              color: Colors.white,
-              child: RichText(
-                text: const TextSpan(
-                  style: TextStyle(color: Colors.black),
-                  children: [
-                    TextSpan(
-                        text: 'Harry ',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    TextSpan(
-                        text:
-                        'This example of my 3th homework for flutter'),
-                  ],
-                ),
-              ),
-            ),
+class HeroPage extends StatelessWidget {
+  const HeroPage({super.key});
 
-            const SizedBox(height: 12),
-          ],
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Hero Page')),
+      body: const Center(
+        child: Hero(
+          tag: 'icon',
+          child: Icon(
+            Icons.home,
+            size: 50,
+            color: Colors.green,
+          ),
         ),
       ),
     );
