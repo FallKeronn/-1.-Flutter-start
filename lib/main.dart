@@ -1,134 +1,87 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const AnimationApp());
+  runApp(const MyApp());
 }
 
-class AnimationApp extends StatelessWidget {
-  const AnimationApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        scaffoldBackgroundColor: Colors.grey.shade300,
-      ),
-      home: Home(),
+      home: HomePage(),
     );
   }
 }
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _HomeState extends State<Home> {
-  int number = 0;
+class _HomePageState extends State<HomePage> {
+  int likes = 0;
+
+  void addLike() {
+    setState(() {
+      likes++;
+    });
+  }
+
+  void resetLikes() {
+    setState(() {
+      likes = 0;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Home Page')),
-
-      drawer: Drawer(
-        child: ListView(
-          children: const [
-            DrawerHeader(
-              child: Text('Menu', style: TextStyle(fontSize: 20)),
-            ),
-            ListTile(title: Text('Home')),
-            ListTile(title: Text('Settings')),
-            ListTile(title: Text('Rules')),
+      appBar: AppBar(
+        title: Text('Likes: $likes'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            LikeButton(onLike: addLike),
+            const SizedBox(height: 8),
+            ResetButton(onReset: resetLikes),
           ],
         ),
       ),
-
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 500),
-        child: number == 0
-            ? const HeroWidget()
-            : const Center(
-          child: Icon(
-            Icons.settings,
-            size: 50,
-            color: Colors.green,
-          ),
-        ),
-      ),
-
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.open_in_new),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => const HeroPage(),
-            ),
-          );
-        },
-      ),
-
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: number,
-        onTap: (value) {
-          setState(() {
-            number = value;
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
-      ),
     );
   }
 }
 
-class HeroWidget extends StatelessWidget {
-  const HeroWidget({super.key});
+class LikeButton extends StatelessWidget {
+  final VoidCallback onLike;
+
+  const LikeButton({super.key, required this.onLike});
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Hero(
-        tag: 'icon',
-        child: Icon(
-          Icons.home,
-          size: 50,
-          color: Colors.green,
-        ),
-      ),
+    return ElevatedButton(
+      onPressed: onLike,
+      child: const Text('❤️ Like'),
     );
   }
 }
 
-class HeroPage extends StatelessWidget {
-  const HeroPage({super.key});
+class ResetButton extends StatelessWidget {
+  final VoidCallback onReset;
+
+  const ResetButton({super.key, required this.onReset});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Hero Page')),
-      body: const Center(
-        child: Hero(
-          tag: 'icon',
-          child: Icon(
-            Icons.home,
-            size: 50,
-            color: Colors.green,
-          ),
-        ),
-      ),
+    return OutlinedButton(
+      onPressed: onReset,
+      child: const Text('🔄 Reset'),
     );
   }
 }
