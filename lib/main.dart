@@ -19,7 +19,7 @@ class MyCard {
 
 class CardModel extends ChangeNotifier {
   List<MyCard> cards = [
-    MyCard("Card 1", 0),
+    MyCard("Card 1,", 0),
     MyCard("Card 2", 0),
     MyCard("Card 3", 0),
     MyCard("Card 4", 0),
