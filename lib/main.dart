@@ -1,106 +1,86 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => CardModel(),
-      child: const MyApp(),
-    ),
-  );
+  runApp(MyApp());
 }
 
-class MyCard {
-  String title;
-  int pressed;
-
-  MyCard(this.title, this.pressed);
+class MyApp extends StatefulWidget {
+  @override
+  State<MyApp> createState() => _MyAppState();
 }
 
-class CardModel extends ChangeNotifier {
-  List<MyCard> cards = [
-    MyCard("Card 1,", 0),
-    MyCard("Card 2", 0),
-    MyCard("Card 3", 0),
-    MyCard("Card 4", 0),
-  ];
-
-  void incrementPressed(int index) {
-    cards[index].pressed++;
-    notifyListeners();
-  }
-
-  int get totalPressed {
-    int sum = 0;
-    for (var card in cards) {
-      sum += card.pressed;
-    }
-    return sum;
-  }
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class _MyAppState extends State<MyApp> {
+  bool isDark = false;
+  List posts = [];
 
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: HomePage(),
+  void initState() {
+    super.initState();
+    loadTheme();
+    loadPosts();
+  }
+
+  Future<void> loadTheme() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isDark = prefs.getBool('theme') ?? false;
+    });
+  }
+
+  void changeTheme() {
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setBool('theme', !isDark);
+    });
+
+    setState(() {
+      isDark = !isDark;
+    });
+  }
+
+  Future<void> loadPosts() async {
+    final response = await http.get(
+      Uri.parse('https://jsonplaceholder.typicode.com/posts'),
     );
-  }
-}
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+    if (response.statusCode == 200) {
+      setState(() {
+        posts = parseJson(response.body);
+      });
+    }
+  }
+
+  List parseJson(String body) {
+    return json.decode(body);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Cards"),
-        centerTitle: true,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(20),
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: Consumer<CardModel>(
-              builder: (context, model, child) {
-                return Text(
-                  "Number of Pressed: ${model.totalPressed}",
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 18,
-                  ),
-                );
-              },
-            ),
-          ),
+    return MaterialApp(
+      theme: isDark ? ThemeData.dark() : ThemeData.light(),
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text("Homework"),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.brightness_6),
+              onPressed: changeTheme,
+            )
+          ],
         ),
-      ),
-      body: Consumer<CardModel>(
-        builder: (context, model, child) {
-          return ListView.builder(
-            itemCount: model.cards.length,
-            itemBuilder: (context, index) {
-              return Card(
-                margin: const EdgeInsets.all(8),
-                child: ListTile(
-                  title: Text(model.cards[index].title),
-                  subtitle: Text(
-                    "Pressed: ${model.cards[index].pressed}",
-                  ),
-                  onTap: () {
-                    Provider.of<CardModel>(
-                      context,
-                      listen: false,
-                    ).incrementPressed(index);
-                  },
-                ),
-              );
-            },
-          );
-        },
+        body: posts.isEmpty
+            ? Center(child: CircularProgressIndicator())
+            : ListView.builder(
+          itemCount: posts.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              title: Text(posts[index]['title']),
+              subtitle: Text(posts[index]['body']),
+            );
+          },
+        ),
       ),
     );
   }
